@@ -10,7 +10,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"sync"
 
 	"github.com/fatih/color"
 )
@@ -28,31 +27,34 @@ func main() {
 		return
 	}
 	exePath = filepath.Dir(exePath)
-	initPrototypeDir := flag.String("init", "", "To set the path of prototype directory")
+	initialPrototypeDirPath := flag.String("init", "", "To set the path of prototype directory")
 	prototypeName := flag.String("p", "", "The name of prototype.")
 	flag.Parse()
-	if !isExist(exePath+"\\config.json") || *initPrototypeDir != "" {
-		if initErr := initConfig(*initPrototypeDir, exePath); initErr != nil {
+	if !isExist(exePath+"\\config.json") || *initialPrototypeDirPath != "" {
+		if initErr := initConfig(*initialPrototypeDirPath, exePath); initErr != nil {
 			red.Println("Error :", initErr)
 			return
 		}
 		return
 	}
+
 	prototypePath, getErr := getProtoTypeDir(exePath)
 	if getErr != nil {
 		red.Println("Error :", getErr)
 		return
 	}
+
 	requirePrptotypePath := prototypePath + "\\" + filepath.Base(*prototypeName)
 	if !isExist(requirePrptotypePath) {
 		fmt.Println("No such prototype.")
 		return
 	}
 
-	if *prototypeName == "" && len(flag.Args()) == 0 && *initPrototypeDir == "" {
+	if *prototypeName == "" && len(flag.Args()) == 0 && *initialPrototypeDirPath == "" {
 		fmt.Println("Please set argument.")
 		return
 	}
+
 	if len(flag.Args()) != 0 {
 		if err := createFileAndDir(flag.Arg(0)); err != nil {
 			red.Println("Error :", err)
@@ -71,22 +73,13 @@ func main() {
 		red.Println(createDirErr.Error())
 		return
 	}
-	waitCopying := new(sync.WaitGroup)
-	limitRoutine := make(chan struct{}, 100)
 	for _, c := range filePath {
-		waitCopying.Add(1)
-		go func(wg *sync.WaitGroup, c string) {
-			limitRoutine <- struct{}{}
-			cpErr := copyFile(c, prototypeName, prototypePath)
-			if cpErr != nil {
-				red.Println(cpErr)
-				return
-			}
-			<-limitRoutine
-			wg.Done()
-		}(waitCopying, c)
+		cpErr := copyFile(c, prototypeName, prototypePath)
+		if cpErr != nil {
+			red.Println(cpErr)
+			return
+		}
 	}
-	waitCopying.Wait()
 }
 
 func getProtoTypeDir(exePath string) (string, error) {
