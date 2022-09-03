@@ -14,7 +14,6 @@ type DirStructure struct {
 }
 
 func CopyFile(destFile string, sourceFile string) error {
-	fmt.Println(sourceFile)
 	file, createErr := os.Create(destFile)
 	src, openErr := os.Open(sourceFile)
 	if createErr != nil {
@@ -42,6 +41,9 @@ func ReadDirStructure(target string) (DirStructure, error) {
 			return err
 		}
 		path, err = filepath.Rel(target, path)
+		if err != nil {
+			return err
+		}
 		if info.IsDir() {
 			dirStruct.Directories = append(dirStruct.Directories, path)
 		} else {
