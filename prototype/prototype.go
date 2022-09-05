@@ -48,6 +48,9 @@ func Create(prototypeName string) error {
 	if err != nil {
 		return err
 	}
+	if !isExist(filepath.Join(base, prototypeName)) {
+		return errors.New("no such prototype")
+	}
 	dir, err := files.ReadDirStructure(filepath.Join(base, prototypeName))
 	if err != nil {
 		return err

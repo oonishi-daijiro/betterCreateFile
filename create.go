@@ -31,7 +31,10 @@ func main() {
 	}
 
 	if *prototypeName != "" {
-		prototype.Create(*prototypeName)
+		if err := prototype.Create(*prototypeName); err != nil {
+			red.Println(err)
+			return
+		}
 	}
 
 	for _, path := range flag.Args() {
