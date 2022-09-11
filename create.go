@@ -4,6 +4,7 @@ import (
 	"files"
 	"flag"
 	"fmt"
+	"path/filepath"
 	"prototype"
 
 	"github.com/fatih/color"
@@ -36,13 +37,17 @@ func main() {
 			return
 		}
 	}
-
+	previousDir := ""
 	for _, path := range flag.Args() {
 		if files.IsExist(path) {
 			if !files.IsRequiredOverwirte(path) {
 				continue
 			}
 		}
+		if string(path[0]) == "_" {
+			path = previousDir + string(path[1:])
+		}
+		previousDir = filepath.Dir(path)
 		err := files.Create(path)
 		if err != nil {
 			red.Println(err.Error())
