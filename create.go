@@ -39,13 +39,13 @@ func main() {
 	}
 	previousDir := ""
 	for _, path := range flag.Args() {
+		if string(path[0]) == "_" {
+			path = previousDir + string(path[1:])
+		}
 		if files.IsExist(path) {
 			if !files.IsRequiredOverwirte(path) {
 				continue
 			}
-		}
-		if string(path[0]) == "_" {
-			path = previousDir + string(path[1:])
 		}
 		previousDir = filepath.Dir(path)
 		err := files.Create(path)
