@@ -20,7 +20,7 @@ func Init(prototypePath string) error {
 	if err != nil {
 		return err
 	}
-	config, err := config.Init[string]()
+	config, err := config.Init[string]("config.create.json")
 	if err != nil {
 		return err
 	}
@@ -31,8 +31,8 @@ func Init(prototypePath string) error {
 	return nil
 }
 
-func getBaseDirPath() (string, error) {
-	config, err := config.Init[string]()
+func GetBaseDirectoryPath() (string, error) {
+	config, err := config.Init[string]("config.create.json")
 	if err != nil {
 		return "", err
 	}
@@ -44,7 +44,7 @@ func getBaseDirPath() (string, error) {
 }
 
 func Create(prototypeName string) error {
-	base, err := getBaseDirPath()
+	base, err := GetBaseDirectoryPath()
 	if err != nil {
 		return err
 	}

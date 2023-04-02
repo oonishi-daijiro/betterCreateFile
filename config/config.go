@@ -11,8 +11,9 @@ type JsonTypes interface {
 }
 
 type Config[T JsonTypes] struct {
-	path    string
-	rawJson map[string]T
+	path     string
+	rawJson  map[string]T
+	fileName string
 }
 
 func isExist(path string) bool {
@@ -20,26 +21,27 @@ func isExist(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-func Init[T JsonTypes]() (Config[T], error) {
+func Init[T JsonTypes](fileName string) (Config[T], error) {
 	exePath, exePathErr := os.Executable()
 	if exePathErr != nil {
 		return Config[T]{}, exePathErr
 	}
 	exePath = filepath.Dir(exePath)
 
-	if !isExist(exePath + "\\config.json") {
-		if initErr := initFile(exePath); initErr != nil {
+	if !isExist(exePath + "\\" + fileName) {
+		if initErr := initFile(exePath + "\\" + fileName); initErr != nil {
 			return Config[T]{}, initErr
 		}
 	}
 	config := Config[T]{}
-	config.path = exePath + "\\config.json"
+	config.path = exePath + "\\" + fileName
 	config.rawJson = make(map[string]T)
+	config.fileName = fileName
 	return config, nil
 }
 
-func initFile(exePath string) error {
-	_, err := os.Create(exePath + "\\config.json")
+func initFile(path string) error {
+	_, err := os.Create(path)
 	if err != nil {
 		return err
 	}

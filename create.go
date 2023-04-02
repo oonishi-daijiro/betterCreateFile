@@ -4,6 +4,7 @@ import (
 	"files"
 	"flag"
 	"fmt"
+	"os"
 	"path/filepath"
 	"prototype"
 
@@ -16,6 +17,7 @@ func main() {
 
 	initialPrototypeDirPath := flag.String("init", "", "To set the path of prototype directory")
 	prototypeName := flag.String("p", "", "The name of prototype.")
+	flagShowPrototypeList := flag.Bool("list", false, "Flag whether to show prototype list")
 
 	flag.Parse()
 
@@ -24,6 +26,29 @@ func main() {
 			red.Println(err.Error())
 			return
 		}
+	}
+
+	if *flagShowPrototypeList {
+		basePath, errGetBaseDir := prototype.GetBaseDirectoryPath()
+		if errGetBaseDir != nil {
+			red.Println(errGetBaseDir.Error())
+			return
+		}
+		directories, errReadDir := os.ReadDir(basePath)
+		if errReadDir != nil {
+			red.Println(errReadDir.Error())
+		}
+		for _, dir := range directories {
+			info, errGetInfo := dir.Info()
+			if errGetInfo != nil {
+				red.Println(errGetInfo.Error())
+				return
+			}
+			if info.IsDir() {
+				fmt.Println(info.Name())
+			}
+		}
+		return
 	}
 
 	if *prototypeName == "" && len(flag.Args()) == 0 && *initialPrototypeDirPath == "" {
