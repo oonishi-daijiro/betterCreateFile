@@ -1,14 +1,14 @@
-# Better create file
+# Create
 
-Better create file はコマンドでのファイル作成をより簡単に行います。
+createはコマンドでのファイル作成をより簡単に行います。
 
-`betterCreateFile.exe hoge.txt`
+`create.exe hoge.txt`
 
 で`hoge.txt`を作成します
 
 また、
 
-`betterCreateFile.exe ./piyo/hoge.txt`
+`create.exe ./piyo/hoge.txt`
 
 で `piyo/hoge.txt`にファイルを作成します。`./piyo/`がない場合は作成します
 
@@ -19,9 +19,9 @@ Better create file はコマンドでのファイル作成をより簡単に行�
 プロトタイプは`-init` オプションで指定したディレクトリから参照されます。
 
 ```
-betterCreateFile.exe -init ./prototypes/
+create.exe -init ./prototypes/
 //プロトタイプのディレクトリを指定。
-betterCreateFile.exe -p hoge
+create.exe -p hoge
 //プロトタイプディレクトリ内の/hogeディレクトリ内がプロトタイプとしてコピーされます。
 ```
 
